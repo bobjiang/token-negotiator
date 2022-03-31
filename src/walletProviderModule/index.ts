@@ -3,12 +3,8 @@ import Torus from "@toruslabs/torus-embed";
 import Web3 from "web3";
 import { ethers } from "ethers";
 
-interface WalletObjectRef {
-    walletType: string;
-}
-
 interface WalletCollectionState {
-    addresses: [];
+    addresses: any[];
 }
 
 class Web3WalletProvider {
