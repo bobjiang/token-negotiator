@@ -69,25 +69,10 @@ export class Client {
 
         this.clientCallBackEvents = {};
 
-        // apply data for view when active mode
-
-        /*
-
-            this.onChainTokens / this.offChainTokens: {
-                tokenKeys: ['devcon', '0x...'],
-                devcon: { 
-                    tokens: [] 
-                }
-            }
-
-        */
-
         this.prePopulateTokenLookupStore(issuers);
 
-        // currently custom to Token Negotiator
         this.web3WalletProvider = new Web3WalletProvider();
 
-        // on chain token manager module
         this.onChainTokenModule = new OnChainTokenModule();
 
         this.messaging = new Messaging();
@@ -102,27 +87,20 @@ export class Client {
 
         issuers.forEach((issuer: any) => {
 
-            // create key with address and chain for easy reference
             let issuerKey = issuer.collectionID; 
 
-            // Populate the token lookup store with initial data.
             this.updateTokenLookupStore(issuerKey, issuer);
 
             if((issuer.contract) && (issuer.chain)) {
 
-                // stop duplicate entries
                 if(this.onChainTokens[issuerKey]) return;
 
-                // add onchain token (non-tokenscipt)
                 this.onChainTokens.tokenKeys.push(issuerKey);
 
-                // add empty tokens list (non-tokenscript)
                 this.onChainTokens[issuerKey] = { tokens: [] };
 
             } else {
                 
-                // off chain token attestations 
-
                 this.offChainTokens.tokenKeys.push(issuer.collectionID);
 
                 this.offChainTokens[issuer.collectionID] = { tokens: [] };
@@ -141,10 +119,6 @@ export class Client {
         };
     }
 
-    // To enrich the token lookup store with data.
-    // for on chain tokens that are not using token script this is 
-    // required, for off chain this is most likely not required because the configurations
-    // are already pre-defined e.g. title, issuer image image etc.
     updateTokenLookupStore(tokenKey, data) {
 
         if(!this.tokenLookup[tokenKey]) this.tokenLookup[tokenKey] = {};
@@ -219,7 +193,6 @@ export class Client {
 
                 lookupData.onChain = true;
 
-                // enrich the tokenLookup store with contract meta data
                 this.updateTokenLookupStore(issuerKey, lookupData);
             }
 
@@ -229,18 +202,6 @@ export class Client {
 
     async negotiate() {
 
-        /*
-            ------------------------------
-            blockchain token reader module
-            ------------------------------
-        
-            * await this.setBlockchainTokens(this.onChainTokens);
-        */
-
-        // if storage support - embed iframe for active and passive negotiation flows.
-        // else open with window each time.
-
-        // Enrich the look up data with the accepted on chain tokens
         await this.enrichTokenLookupDataOnChainTokens(this.onChainTokens);
         await this.enrichTokenLookupDataOffChainTokens(this.offChainTokens);
 
@@ -287,11 +248,6 @@ export class Client {
     }
 
     async passiveNegotiationStrategy() {
-
-        // Feature not supported when an end users third party cookies are disabled
-        // because the use of a tab requires a user gesture.
-        // TODO: this check should be skipped if there is no offchain tokens
-        //       if there are offchain tokens, but there are also onchain tokens, show loaded tokens along with an error/warning message?
 
         let canUsePassive = false;
 
