@@ -198,7 +198,7 @@ export class Client {
 
         await Promise.all(offChainTokens.tokenKeys.map(async (issuerKey: string): Promise<any> => {
 
-            return fetch(`${this.tokenLookup[issuerKey].tokenConfigURI}`, {})
+            return fetch(`${this.tokenLookup[issuerKey].tokenConfigURI}`, { mode: 'cors' })
             .then(response => response.json())
             .then(response => {
                 this.updateTokenLookupStore(issuerKey, response);
